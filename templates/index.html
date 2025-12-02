@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; font-size: 2.5em; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        input, select, button { padding: 10px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        input[type="text"], input[type="email"], select { flex: 1; min-width: 200px; }
+        button { background: #667eea; color: white; cursor: pointer; transition: 0.3s; border: none; font-weight: 600; }
+        button:hover { background: #764ba2; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        button.delete-btn { background: #e74c3c; padding: 8px 12px; font-size: 12px; }
+        button.delete-btn:hover { background: #c0392b; }
+        button.edit-btn { background: #3498db; padding: 8px 12px; font-size: 12px; }
+        button.edit-btn:hover { background: #2980b9; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-weight: 600; color: #333; }
+        tr:hover { background: #f8f9fa; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: white; margin: auto; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: #000; }
+        .modal-content h2 { margin-bottom: 20px; color: #333; }
+        .modal-content input { width: 100%; margin-bottom: 15px; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .modal-buttons button { flex: 1; }
+        .error-message { color: #e74c3c; padding: 10px; background: #fadbd8; border-radius: 5px; margin-bottom: 10px; display: none; }
+        .success-message { color: #27ae60; padding: 10px; background: #d5f4e6; border-radius: 5px; margin-bottom: 10px; display: none; }
+        .loading { text-align: center; color: #667eea; display: none; }
+        .empty-state { text-align: center; padding: 40px; color: #999; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✍️ User Management System</h1>
+        
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="Search users by name...">
+            <input type="text" id="nameInput" placeholder="Enter name">
+            <input type="email" id="emailInput" placeholder="Enter email">
+            <button onclick="addUser()">Add User</button>
+            <select id="sortSelect" onchange="sortUsers()">
+                <option value="name_asc">Sort by Name (A-Z)</option>
+                <option value="name_desc">Sort by Name (Z-A)</option>
+                <option value="email_asc">Sort by Email (A-Z)</option>
+                <option value="email_desc">Sort by Email (Z-A)</option>
+            </select>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+        <div id="loading" class="loading">Loading...</div>
+        
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="usersBody">
+                <tr><td colspan="5" class="empty-state">No users yet. Add one to get started!</td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Edit User</h2>
+            <input type="hidden" id="editUserId">
+            <input type="text" id="editName" placeholder="Name">
+            <input type="email" id="editEmail" placeholder="Email">
+            <div class="modal-buttons">
+                <button onclick="closeModal()">Cancel</button>
+                <button onclick="saveEditedUser()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
